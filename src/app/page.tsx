@@ -1,74 +1,39 @@
-"use client"
+"use client";
 
-import { useCallback } from 'react'
-import { StoryViewer } from '@/components/StoryViewer'
-import { useStore } from '@/store/useStore'
-import type { Story } from '@/types'
-
-function generateSampleStory(): Story {
-  const id = Date.now().toString()
-  return {
-    id,
-    title: 'サンプル絵本',
-    childName: 'たろう',
-    createdAt: new Date(),
-    pages: [
-      {
-        id: `${id}-1`,
-        text: 'こんにちは！これはサンプルページ１です。',
-        imageUrl: '/globe.svg',
-        animation: 'fadeIn'
-      },
-      {
-        id: `${id}-2`,
-        text: 'ページ２では次のシーンが登場します。',
-        imageUrl: '/window.svg',
-        animation: 'slideLeft'
-      },
-      {
-        id: `${id}-3`,
-        text: 'おしまい。見てくれてありがとう！',
-        imageUrl: '/file.svg',
-        animation: 'zoom'
-      }
-    ]
-  }
-}
+import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { BookOpenText, Sparkles } from 'lucide-react';
 
 export default function HomePage() {
-  const { currentStory, setCurrentStory } = useStore()
-
-  const handleCreate = useCallback(() => {
-    const story = generateSampleStory()
-    setCurrentStory(story)
-  }, [setCurrentStory])
-
-  if (currentStory) {
-    return <StoryViewer className="h-screen" />
-  }
-
   return (
-    <div style={{ padding: '20px', backgroundColor: '#f0f0f0', minHeight: '100vh' }}>
-      <h1 style={{ color: '#333', fontSize: '32px', marginBottom: '20px' }}>
-        動く絵本アプリ
-      </h1>
-      <p style={{ color: '#666', fontSize: '18px', marginBottom: '20px' }}>
-        子ども向けの動きのあるイラスト付き絵本をWebアプリとして提供するサービスです。
-      </p>
-      <button
-        onClick={handleCreate}
-        style={{
-          backgroundColor: '#8B5CF6',
-          color: 'white',
-          padding: '12px 24px',
-          border: 'none',
-          borderRadius: '8px',
-          fontSize: '16px',
-          cursor: 'pointer'
-        }}
-      >
-        絵本を作る
-      </button>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-yellow-100 via-rose-100 to-sky-100 p-8 text-center">
+      <header className="mb-12">
+        <h1 className="text-6xl font-bold text-pink-600 mb-4 animate-bounce">
+          動く絵本アプリ
+        </h1>
+        <p className="text-xl text-gray-700 max-w-2xl mx-auto">
+          ようこそ！お子さまの名前でオリジナルの絵本を簡単に作成できます。
+          世界にひとつだけの物語を、素敵なアニメーションとともにお楽しみください。
+        </p>
+      </header>
+
+      <div className="mb-12">
+        <Sparkles className="h-24 w-24 text-yellow-400 mx-auto animate-pulse" />
+      </div>
+
+      <Link href="/create" passHref>
+        <Button
+          size="lg"
+          className="bg-pink-500 hover:bg-pink-600 text-white font-bold py-4 px-8 text-2xl rounded-full shadow-xl transition-transform transform hover:scale-110 focus:ring-4 focus:ring-pink-300"
+        >
+          <BookOpenText className="mr-3 h-8 w-8" />
+          絵本を作る
+        </Button>
+      </Link>
+
+      <footer className="mt-16 text-gray-600">
+        <p>&copy; {new Date().getFullYear()} 動く絵本アプリ. All rights reserved.</p>
+      </footer>
     </div>
-  )
+  );
 }
