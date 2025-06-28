@@ -14,12 +14,13 @@ interface StoryViewerProps {
 }
 
 export function StoryViewer({ className }: StoryViewerProps) {
-  const { 
-    currentStory, 
-    currentPageIndex, 
-    nextPage, 
-    previousPage, 
-    setCurrentStory 
+  const {
+    currentStory,
+    currentPageIndex,
+    nextPage,
+    previousPage,
+    setCurrentStory,
+    uploadedImages
   } = useStore()
 
   if (!currentStory) {
@@ -33,6 +34,17 @@ export function StoryViewer({ className }: StoryViewerProps) {
   const progress = ((currentPageIndex + 1) / currentStory.pages.length) * 100
   const canGoNext = currentPageIndex < currentStory.pages.length - 1
   const canGoPrevious = currentPageIndex > 0
+
+  const overlayImageUrl = React.useMemo(() => {
+    if (!uploadedImages.child) return undefined
+    return URL.createObjectURL(uploadedImages.child)
+  }, [uploadedImages.child])
+
+  React.useEffect(() => {
+    return () => {
+      if (overlayImageUrl) URL.revokeObjectURL(overlayImageUrl)
+    }
+  }, [overlayImageUrl])
 
   const handleKeyPress = (event: React.KeyboardEvent) => {
     if (event.key === 'ArrowRight' && canGoNext) {
@@ -83,6 +95,7 @@ export function StoryViewer({ className }: StoryViewerProps) {
             page={currentStory.pages[currentPageIndex]}
             isActive={true}
             className="absolute inset-0"
+            overlayImageUrl={overlayImageUrl}
           />
         </AnimatePresence>
       </div>
