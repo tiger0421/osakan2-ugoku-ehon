@@ -56,12 +56,11 @@ npm install
 # API キーの設定
 プロジェクトルートに `.env` ファイルを作成し、以下のように API キーを設定します。
 
-```bash
 echo "OPENAI_API_KEY=your_api_key_here" > .env
-```
 
 # 開発サーバーを起動
 npm run dev
+
 ```
 
 開発サーバーが起動したら、[http://localhost:3000](http://localhost:3000) でアプリケーションにアクセスできます。
