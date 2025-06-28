@@ -45,7 +45,7 @@ const animationVariants = {
 }
 
 export function StoryPage({ page, isActive, className }: StoryPageProps) {
-  const animation = page.animation || 'fadeIn'
+  const animation: AnimationType = page.animation ?? 'fadeIn'
   const variant = animationVariants[animation]
 
   if (!isActive) return null
