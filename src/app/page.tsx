@@ -87,7 +87,7 @@ export default function HomePage() {
       try {
         const data = await res.json()
         addLog(`エラー: ${data.error || res.statusText}`)
-      } catch (_) {
+      } catch {
         addLog('不明なエラーが発生しました')
       }
       setIsGenerating(false)
