@@ -38,6 +38,8 @@ function generateSampleStory(): Story {
 
 export default function HomePage() {
   const [storyText, setStoryText] = useState('')
+  const [keywords, setKeywords] = useState('')
+  const [isSummarizing, setIsSummarizing] = useState(false)
   const [logs, setLogs] = useState<string[]>([])
   const addLog = useCallback((msg: string) => {
     setLogs(prev => [...prev, msg])
@@ -56,6 +58,47 @@ export default function HomePage() {
     const story = generateSampleStory()
     setCurrentStory(story)
   }, [setCurrentStory, addLog])
+
+  const handleSummarize = useCallback(async () => {
+    if (!keywords.trim()) {
+      addLog('キーワードを入力してください')
+      return
+    }
+
+    addLog('あらすじ生成リクエストを送信します')
+    setIsSummarizing(true)
+
+    let res: Response
+    try {
+      res = await fetch('/api/generate-summary', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ keywords })
+      })
+    } catch (error) {
+      addLog(`リクエストエラー: ${String(error)}`)
+      setIsSummarizing(false)
+      return
+    }
+
+    addLog(`サーバーからの応答: ${res.status}`)
+
+    if (!res.ok) {
+      try {
+        const data = await res.json()
+        addLog(`エラー: ${data.error || res.statusText}`)
+      } catch {
+        addLog('不明なエラーが発生しました')
+      }
+      setIsSummarizing(false)
+      return
+    }
+
+    const data = await res.json()
+    setStoryText(data.summary || '')
+    addLog('あらすじを生成しました')
+    setIsSummarizing(false)
+  }, [keywords, addLog])
 
   const handleGenerate = useCallback(async () => {
     if (!uploadedImages.child || !storyText.trim()) {
@@ -136,6 +179,36 @@ export default function HomePage() {
       <div style={{ marginBottom: '20px' }}>
         <ImageUpload type="child" />
       </div>
+
+      <input
+        type="text"
+        value={keywords}
+        onChange={(e) => setKeywords(e.target.value)}
+        placeholder="キーワードを入力"
+        style={{
+          width: '100%',
+          padding: '8px',
+          marginBottom: '12px',
+          borderRadius: '6px'
+        }}
+      />
+      <button
+        onClick={handleSummarize}
+        disabled={isSummarizing}
+        style={{
+          backgroundColor: '#34D399',
+          color: 'white',
+          padding: '8px 16px',
+          border: 'none',
+          borderRadius: '6px',
+          fontSize: '14px',
+          cursor: 'pointer',
+          opacity: isSummarizing ? 0.6 : 1,
+          marginBottom: '20px'
+        }}
+      >
+        {isSummarizing ? '生成中...' : 'あらすじ生成'}
+      </button>
 
       <textarea
         value={storyText}
