@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
 
   const openai = new OpenAI({ apiKey })
 
-  const prompt = `${story}\nIllustrate this scene for a children's picture book. The main character should resemble the uploaded child photo. Place the protagonist's face at the center of the image and cut out the face area so it is transparent.`
+  const prompt = `${story}\nIllustrate this scene for a children's picture book. The main character should resemble the uploaded child photo. Place the protagonist's face at the center of the image.`
 
   try {
     const res = await openai.images.generate({

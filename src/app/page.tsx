@@ -36,11 +36,40 @@ function generateSampleStory(): Story {
   }
 }
 
+function cropImageToCircle(url: string, diameter = 512): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+    img.crossOrigin = 'anonymous'
+    img.onload = () => {
+      const size = Math.min(img.width, img.height, diameter)
+      const canvas = document.createElement('canvas')
+      canvas.width = size
+      canvas.height = size
+      const ctx = canvas.getContext('2d')
+      if (!ctx) {
+        reject(new Error('canvas not supported'))
+        return
+      }
+      ctx.beginPath()
+      ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2)
+      ctx.clip()
+      const sx = (img.width - size) / 2
+      const sy = (img.height - size) / 2
+      ctx.drawImage(img, sx, sy, size, size, 0, 0, size, size)
+      resolve(canvas.toDataURL())
+    }
+    img.onerror = (e) => reject(e)
+    img.src = url
+  })
+}
+
 export default function HomePage() {
   const [storyText, setStoryText] = useState('')
   const [keywords, setKeywords] = useState('')
   const [isSummarizing, setIsSummarizing] = useState(false)
   const [logs, setLogs] = useState<string[]>([])
+  const [croppedUrl, setCroppedUrl] = useState<string | null>(null)
+  const [generatedStory, setGeneratedStory] = useState<Story | null>(null)
   const addLog = useCallback((msg: string) => {
     setLogs(prev => [...prev, msg])
     console.log(msg)
@@ -156,10 +185,19 @@ export default function HomePage() {
       pages
     }
 
-    addLog('物語を表示します')
-    setCurrentStory(story)
+    let preview: string | null = null
+    if (urls[0]) {
+      try {
+        preview = await cropImageToCircle(urls[0])
+        setCroppedUrl(preview)
+      } catch (e) {
+        console.error('crop error', e)
+      }
+    }
+
+    setGeneratedStory(story)
     setIsGenerating(false)
-  }, [uploadedImages.child, storyText, setCurrentStory, setIsGenerating, addLog])
+  }, [uploadedImages.child, storyText, setIsGenerating, addLog])
 
   if (currentStory) {
     return <StoryViewer className="h-screen" />
@@ -257,6 +295,38 @@ export default function HomePage() {
         </button>
       </div>
 
+      {croppedUrl && (
+        <div style={{ marginTop: '20px', textAlign: 'center' }}>
+          <img
+            src={croppedUrl}
+            alt="preview"
+            style={{
+              width: '200px',
+              height: '200px',
+              borderRadius: '50%',
+              objectFit: 'cover',
+              marginBottom: '12px'
+            }}
+          />
+          {generatedStory && (
+            <button
+              onClick={() => setCurrentStory(generatedStory)}
+              style={{
+                backgroundColor: '#2563EB',
+                color: 'white',
+                padding: '8px 16px',
+                border: 'none',
+                borderRadius: '6px',
+                fontSize: '14px',
+                cursor: 'pointer'
+              }}
+            >
+              絵本を見る
+            </button>
+          )}
+        </div>
+      )}
+
       {logs.length > 0 && (
         <div
           style={{
@@ -276,3 +346,4 @@ export default function HomePage() {
     </div>
   )
 }
+
