@@ -23,6 +23,17 @@ export function StoryViewer({ className }: StoryViewerProps) {
     uploadedImages
   } = useStore()
 
+  const overlayImageUrl = React.useMemo(() => {
+    if (!uploadedImages.child) return undefined
+    return URL.createObjectURL(uploadedImages.child)
+  }, [uploadedImages.child])
+
+  React.useEffect(() => {
+    return () => {
+      if (overlayImageUrl) URL.revokeObjectURL(overlayImageUrl)
+    }
+  }, [overlayImageUrl])
+
   if (!currentStory) {
     return (
       <div className="flex items-center justify-center h-full">
@@ -34,17 +45,6 @@ export function StoryViewer({ className }: StoryViewerProps) {
   const progress = ((currentPageIndex + 1) / currentStory.pages.length) * 100
   const canGoNext = currentPageIndex < currentStory.pages.length - 1
   const canGoPrevious = currentPageIndex > 0
-
-  const overlayImageUrl = React.useMemo(() => {
-    if (!uploadedImages.child) return undefined
-    return URL.createObjectURL(uploadedImages.child)
-  }, [uploadedImages.child])
-
-  React.useEffect(() => {
-    return () => {
-      if (overlayImageUrl) URL.revokeObjectURL(overlayImageUrl)
-    }
-  }, [overlayImageUrl])
 
   const handleKeyPress = (event: React.KeyboardEvent) => {
     if (event.key === 'ArrowRight' && canGoNext) {
