@@ -9,6 +9,7 @@ interface StoryPageProps {
   page: StoryPageType
   isActive: boolean
   className?: string
+  overlayImageUrl?: string
 }
 
 const animationVariants = {
@@ -44,7 +45,7 @@ const animationVariants = {
   }
 }
 
-export function StoryPage({ page, isActive, className }: StoryPageProps) {
+export function StoryPage({ page, isActive, className, overlayImageUrl }: StoryPageProps) {
   const animation: AnimationType = page.animation ?? 'fadeIn'
   const variant = animationVariants[animation]
 
@@ -85,14 +86,26 @@ export function StoryPage({ page, isActive, className }: StoryPageProps) {
       {/* Illustration Area */}
       <div className="flex-1 flex items-center justify-center mb-6 w-full max-w-md">
         {page.imageUrl ? (
-          <motion.img
-            src={page.imageUrl}
-            alt={`Story illustration for: ${page.text}`}
-            className="max-w-full max-h-full object-contain rounded-lg shadow-lg"
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.2, duration: 0.4 }}
-          />
+          <div className="relative">
+            <motion.img
+              src={page.imageUrl}
+              alt={`Story illustration for: ${page.text}`}
+              className="max-w-full max-h-full object-contain rounded-lg shadow-lg"
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.2, duration: 0.4 }}
+            />
+            {overlayImageUrl && (
+              <motion.img
+                src={overlayImageUrl}
+                alt="overlay"
+                className="absolute inset-0 m-auto w-1/2 h-1/2 object-cover"
+                initial={{ scale: 0.9, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ delay: 0.2, duration: 0.4 }}
+              />
+            )}
+          </div>
         ) : (
           <motion.div
             className="w-full h-64 bg-gradient-to-br from-pink-100 to-purple-100 rounded-lg shadow-lg flex items-center justify-center"
