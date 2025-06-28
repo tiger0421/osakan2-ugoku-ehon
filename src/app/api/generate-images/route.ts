@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
       size: '1024x1024'
     })
 
-    const urls = res.data.map(d => d.url)
+    const urls = (res.data ?? []).map(d => d.url)
 
     return NextResponse.json({ urls })
   } catch (error) {
