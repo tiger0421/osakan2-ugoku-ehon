@@ -140,8 +140,8 @@ export default function HomePage() {
       <textarea
         value={storyText}
         onChange={(e) => setStoryText(e.target.value)}
-        rows={4}
-        placeholder="1行ずつ4ページ分の物語を入力してください"
+        rows={1}
+        placeholder="1行の物語を入力してください"
         style={{
           width: '100%',
           padding: '8px',
