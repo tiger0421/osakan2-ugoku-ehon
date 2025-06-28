@@ -38,6 +38,11 @@ function generateSampleStory(): Story {
 
 export default function HomePage() {
   const [storyText, setStoryText] = useState('')
+  const [logs, setLogs] = useState<string[]>([])
+  const addLog = useCallback((msg: string) => {
+    setLogs(prev => [...prev, msg])
+    console.log(msg)
+  }, [])
   const {
     currentStory,
     setCurrentStory,
@@ -47,24 +52,44 @@ export default function HomePage() {
   } = useStore()
 
   const handleCreate = useCallback(() => {
+    addLog('サンプルストーリーを生成します')
     const story = generateSampleStory()
     setCurrentStory(story)
-  }, [setCurrentStory])
+  }, [setCurrentStory, addLog])
 
   const handleGenerate = useCallback(async () => {
-    if (!uploadedImages.child || !storyText.trim()) return
+    if (!uploadedImages.child || !storyText.trim()) {
+      addLog('画像または物語のテキストが不足しています')
+      return
+    }
 
+    addLog('画像生成リクエストを送信します')
     setIsGenerating(true)
     const formData = new FormData()
     formData.append('image', uploadedImages.child)
     formData.append('story', storyText)
 
-    const res = await fetch('/api/generate-images', {
-      method: 'POST',
-      body: formData
-    })
+    let res: Response
+    try {
+      res = await fetch('/api/generate-images', {
+        method: 'POST',
+        body: formData
+      })
+    } catch (error) {
+      addLog(`リクエストエラー: ${String(error)}`)
+      setIsGenerating(false)
+      return
+    }
+
+    addLog(`サーバーからの応答: ${res.status}`)
 
     if (!res.ok) {
+      try {
+        const data = await res.json()
+        addLog(`エラー: ${data.error || res.statusText}`)
+      } catch (_) {
+        addLog('不明なエラーが発生しました')
+      }
       setIsGenerating(false)
       return
     }
@@ -88,9 +113,10 @@ export default function HomePage() {
       pages
     }
 
+    addLog('物語を表示します')
     setCurrentStory(story)
     setIsGenerating(false)
-  }, [uploadedImages.child, storyText, setCurrentStory, setIsGenerating])
+  }, [uploadedImages.child, storyText, setCurrentStory, setIsGenerating, addLog])
 
   if (currentStory) {
     return <StoryViewer className="h-screen" />
@@ -157,6 +183,23 @@ export default function HomePage() {
           サンプルを表示
         </button>
       </div>
+
+      {logs.length > 0 && (
+        <div
+          style={{
+            marginTop: '20px',
+            backgroundColor: '#f9f9f9',
+            border: '1px solid #ddd',
+            borderRadius: '6px',
+            padding: '10px',
+            maxHeight: '200px',
+            overflowY: 'auto',
+            fontSize: '12px'
+          }}
+        >
+          <pre style={{ whiteSpace: 'pre-wrap' }}>{logs.join('\n')}</pre>
+        </div>
+      )}
     </div>
   )
 }
