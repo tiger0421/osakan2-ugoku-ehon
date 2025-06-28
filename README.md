@@ -53,6 +53,13 @@ cd ugoku-ehon-app
 # 依存関係をインストール
 npm install
 
+# API キーの設定
+プロジェクトルートに `.env` ファイルを作成し、以下のように API キーを設定します。
+
+```bash
+echo "OPENAI_API_KEY=your_api_key_here" > .env
+```
+
 # 開発サーバーを起動
 npm run dev
 ```
