@@ -14,13 +14,25 @@ interface StoryViewerProps {
 }
 
 export function StoryViewer({ className }: StoryViewerProps) {
-  const { 
-    currentStory, 
-    currentPageIndex, 
-    nextPage, 
-    previousPage, 
-    setCurrentStory 
+  const {
+    currentStory,
+    currentPageIndex,
+    nextPage,
+    previousPage,
+    setCurrentStory,
+    uploadedImages
   } = useStore()
+
+  const overlayImageUrl = React.useMemo(() => {
+    if (!uploadedImages.child) return undefined
+    return URL.createObjectURL(uploadedImages.child)
+  }, [uploadedImages.child])
+
+  React.useEffect(() => {
+    return () => {
+      if (overlayImageUrl) URL.revokeObjectURL(overlayImageUrl)
+    }
+  }, [overlayImageUrl])
 
   if (!currentStory) {
     return (
@@ -83,6 +95,7 @@ export function StoryViewer({ className }: StoryViewerProps) {
             page={currentStory.pages[currentPageIndex]}
             isActive={true}
             className="absolute inset-0"
+            overlayImageUrl={overlayImageUrl}
           />
         </AnimatePresence>
       </div>
