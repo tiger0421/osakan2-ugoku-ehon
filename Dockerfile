@@ -17,7 +17,8 @@ COPY . .
 RUN npm run build
 
 # アプリケーションを起動するコマンドを指定
-CMD ["npm", "run", "start"]
+# コンテナ起動のたびに node_modules と package-lock.json を削除し、npm install を実行
+CMD sh -c "rm -rf node_modules package-lock.json && npm install && npm run start"
 
 # ポート 3000 を公開
 EXPOSE 3000

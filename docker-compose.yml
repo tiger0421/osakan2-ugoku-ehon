@@ -5,3 +5,7 @@ services:
     container_name: ugoku-ehon-app
     ports:
       - "3000:3000"
+    volumes:
+      - .:/app # ホストのカレントディレクトリをマウント
+      - /app/node_modules # ホストのnode_modulesを上書きさせないための匿名ボリューム
+      - /app/package-lock.json # ホストのpackage-lock.jsonを上書きさせないための匿名ボリューム
