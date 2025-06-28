@@ -1,36 +1,150 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 動く絵本アプリ (Ugoku Ehon App)
 
-## Getting Started
+子ども向けの動きのあるイラスト付き絵本をWebアプリとして提供するサービスです。子どもの写真をアップロードすると、その子が主人公として登場する物語を自動生成し、アニメーション付きのページとして閲覧できます。
 
-First, run the development server:
+## 機能
+
+### 🎨 主な機能
+- **絵本の自動生成**: 子どもの名前を入力するだけで、オリジナルの物語を生成
+- **写真アップロード**: 子どもと保護者の写真をアップロード（将来的にAI画像合成に使用）
+- **アニメーション**: 6種類の美しいページ遷移アニメーション
+  - フェードイン/アウト
+- スライド（左右）
+  - バウンス
+  - ズーム
+  - フロート
+- **レスポンシブデザイン**: スマホ・タブレット・デスクトップに対応
+- **プログレス表示**: 物語生成の進捗をリアルタイムで表示
+
+### 🎯 対象ユーザー
+- 3〜6歳の子どもとその保護者
+- スマホまたはタブレットでの閲覧が中心
+
+## 技術スタック
+
+### フロントエンド
+- **Next.js 15** - React フレームワーク
+- **TypeScript** - 型安全性
+- **Tailwind CSS** - スタイリング
+- **Framer Motion** - アニメーション
+- **Zustand** - 状態管理
+- **React Dropzone** - ファイルアップロード
+- **Radix UI** - アクセシブルなUI コンポーネント
+- **Lucide React** - アイコン
+
+### 開発・デプロイ
+- **Vercel** - デプロイメント
+- **ESLint** - コード品質
+- **Turbopack** - 高速ビルド
+
+## セットアップ
+
+### 前提条件
+- Node.js 18.0.0 以上
+- npm または yarn
+
+### インストール
 
 ```bash
+# リポジトリをクローン
+git clone <repository-url>
+cd ugoku-ehon-app
+
+# 依存関係をインストール
+npm install
+
+# 開発サーバーを起動
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+開発サーバーが起動したら、[http://localhost:3000](http://localhost:3000) でアプリケーションにアクセスできます。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## プロジェクト構造
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+ugoku-ehon-app/
+├── src/
+│   ├── app/                    # Next.js App Router
+│   │   ├── globals.css         # グローバルスタイル
+│   │   ├── layout.tsx          # ルートレイアウト
+│   │   └── page.tsx            # ホームページ
+│   ├── components/             # Reactコンポーネント
+│   │   ├── ui/                 # 再利用可能なUIコンポーネント
+│   │   │   ├── button.tsx
+│   │   │   ├── dialog.tsx
+│   │   │   └── progress.tsx
+│   │   ├── ImageUpload.tsx     # 画像アップロードコンポーネント
+│   │   ├── StoryPage.tsx       # 絵本ページコンポーネント
+│   │   └── StoryViewer.tsx     # 絵本ビューアー
+│   ├── lib/
+│   │   └── utils.ts            # ユーティリティ関数
+│   ├── store/
+│   │   └── useStore.ts         # Zustand ストア
+│   └── types/
+│       └── index.ts            # TypeScript型定義
+├── public/                     # 静的ファイル
+├── package.json
+├── tailwind.config.ts
+├── tsconfig.json
+└── README.md
+```
 
-## Learn More
+## 使用方法
 
-To learn more about Next.js, take a look at the following resources:
+### 1. 絵本作成
+1. ホーム画面で「絵本を作る」ボタンをクリック
+2. 子どもの名前を入力（必須）
+3. 保護者の名前を入力（任意）
+4. 子どもの写真をアップロード（任意）
+5. 保護者の写真をアップロード（任意）
+6. 「絵本を生成する」ボタンをクリック
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 2. 絵本閲覧
+- 生成された絵本は自動的に表示されます
+- 「前へ」「次へ」ボタンでページを移動
+- キーボードの矢印キー（←→）でも操作可能
+- プログレスバーで現在の進捗を確認
+- 「ホーム」ボタンで最初の画面に戻る
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## カスタマイズ
 
-## Deploy on Vercel
+### アニメーションの追加
+`src/components/StoryPage.tsx` の `animationVariants` オブジェクトに新しいアニメーションを追加できます。
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### スタイルの変更
+- `src/app/globals.css` でグローバルスタイルを編集
+- `tailwind.config.ts` でTailwindの設定をカスタマイズ
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 物語テンプレートの追加
+`src/app/page.tsx` の `generateSampleStory` 関数で物語のテンプレートを編集できます。
+
+## 今後の拡張予定
+
+### AI統合
+- **OpenAI GPT-4**: 物語の自動生成
+- **Stable Diffusion**: イラストの自動生成
+- **顔合成技術**: アップロードした写真をキャラクターに合成
+
+### 機能追加
+- 物語の保存・管理
+- 複数の物語テンプレート
+- 音声読み上げ機能
+- ソーシャル共有機能
+- 印刷機能
+
+### バックエンド
+- Firebase または Supabase での認証・データベース
+- 画像ストレージ（Firebase Storage / Amazon S3）
+- AI API との連携
+
+## ライセンス
+
+このプロジェクトは MIT ライセンスの下で公開されています。
+
+## 貢献
+
+プルリクエストや Issue の報告を歓迎します。大きな変更を行う前に、まず Issue を作成して議論することをお勧めします。
+
+## サポート
+
+質問や問題がある場合は、GitHub の Issue を作成してください。
